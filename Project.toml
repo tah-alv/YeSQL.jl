@@ -1,7 +1,7 @@
 name = "YeSQL"
 uuid = "20318ed2-ca55-4153-a311-46f0913062ee"
 authors = ["Todd Hay"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
