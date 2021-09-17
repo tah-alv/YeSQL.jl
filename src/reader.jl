@@ -1,3 +1,5 @@
+using Glob: glob
+
 const NAME_REGEX = r"\n?\s*--\s*name:\s*(?<query_name>\w+[\^\*\!\<\#\$]{0,2}+)\n?"
 const DOCSTRING_REGEX = r"^--\s*(?<docstring>.*)\n+"
 const COMMENT_REGEX = r"\n?+\s*?--.*\n?"
@@ -69,9 +71,9 @@ Read files(s) at `path` and insert extracted `SQLQuery`s into
 """
 function load_path!(queries::AbstractDict, path; glob_pattern="*.sql")
     ispath(path) || throw(ArgumentError("$path does not exist"))
-    files = isfile(path) ? [path] : glob(joinpath(path, glob_pattern))
+    files = isfile(path) ? [path] : glob(glob_pattern, path)
     for file in files
-       _extract!(queries, read(path, String))
+       _extract!(queries, read(file, String))
     end
     return nothing
 end
@@ -84,8 +86,6 @@ a directory then include files matching `glob_pattern`.
 
 """
 function load_path(path; glob_pattern="*.sql")
-    ispath(path) || throw(ArgumentError("$path does not exist"))
-    files = isfile(path) ? [path] : glob(joinpath(path, glob_pattern))
     queries = Dict{Symbol, SQLQuery}()
     load_path!(queries, path; glob_pattern=glob_pattern)
     return queries

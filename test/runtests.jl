@@ -3,6 +3,12 @@ using YeSQL
 
 queries = load_path(joinpath(@__DIR__, "sql", "queries.sql"))
 
+@testset "Test query loading" begin
+    @test !(:get_unique_instruments in keys(queries))
+    # load all SQL files
+    qpath = load_path(joinpath(@__DIR__, "sql"))
+    @test :get_unique_instruments in keys(qpath)
+end
 @testset "Test parsing of query names" begin
     names = Dict(
         "-- name: normal_select" => (YeSQL.Select(), :normal_select),
