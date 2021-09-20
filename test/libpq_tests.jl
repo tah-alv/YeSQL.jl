@@ -13,7 +13,8 @@ end
 
 if postgres_installed
     @testset "Test LibPQ query execution" begin
-
+        queries = load_path(joinpath(@__DIR__, "sql"))
+        
         conn = LibPQ.Connection("""dbname=test-yesql user=$(ENV["USER"]) host=localhost""")
 
         # create a table
@@ -45,6 +46,27 @@ if postgres_installed
         @test queries[:count_musicians](conn) == 3
         queries[:delete_musician](conn, adrian)
         @test queries[:count_musicians](conn) == 2
+
+        # test arrays of ranges
+        # queries = load_path(joinpath(@__DIR__, "sql", "more-queries.sql"))
+        queries[:create_test_types](conn)
+
+        d1 = Date(2001,1,1)
+        d2 = Date(2002,1,1)
+        params = (int_val=4,
+                  real_val=4.0,
+                  double_val=4.0,
+                  ts_val=now(),
+                  intrange_val=4..10,
+                  numrange_val=3.0..5.0,
+                  daterange_val=d1..d2,
+                  tsrange_val=(now()-Day(1))..now(),
+                  int_array=[1,2],
+                  real_array=Float32[1,2,3],
+                  intrange_array=[4..10, Interval{Closed,Open}(4,10)],
+                  daterange_array=[d1..d2, Interval{Closed,Open}(d1,d2)])
+
+        queries[:insert_test_types](conn, params)
 
         close(conn)
         run(`dropdb test-yesql`)

@@ -1,3 +1,5 @@
+using Dates
+using Intervals
 using Test
 using YeSQL
 
@@ -7,8 +9,21 @@ queries = load_path(joinpath(@__DIR__, "sql", "queries.sql"))
     @test !(:get_unique_instruments in keys(queries))
     # load all SQL files
     qpath = load_path(joinpath(@__DIR__, "sql"))
-    @test :get_unique_instruments in keys(qpath)
+    @test :create_test_types in keys(qpath)
 end
+
+@testset "Test interval string representation" begin
+    d1 = Date(2020,1,1)
+    d2 = Date(2021,1,1)
+    @test YeSQL._libpq_literal(d1..d2) == "[2020-01-01,2021-01-01]"
+    @test YeSQL._libpq_literal([d1..d2, d1..nothing]) == ["[2020-01-01,2021-01-01]", "[2020-01-01,)"]
+    @test YeSQL._libpq_literal([3..4, Interval{Closed,Open}(3,10)]) == ["[3,4]", "[3,10)"]
+    @test YeSQL._libpq_literal(d1..nothing) == "[2020-01-01,)"
+    @test YeSQL._libpq_literal(Interval{Date}(nothing, nothing)) == "(,)"
+    @test YeSQL._libpq_literal(Interval{Date,Unbounded,Open}(nothing,d2)) == "(,2021-01-01)"
+    @test YeSQL._libpq_literal(Interval{Date,Unbounded,Closed}(nothing,d2)) == "(,2021-01-01]"
+end
+
 @testset "Test parsing of query names" begin
     names = Dict(
         "-- name: normal_select" => (YeSQL.Select(), :normal_select),

@@ -1,16 +1,18 @@
 name = "YeSQL"
 uuid = "20318ed2-ca55-4153-a311-46f0913062ee"
 authors = ["Todd Hay"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Glob = "c27321d9-0574-5035-807b-f59d2c89b15c"
+Intervals = "d8418881-c3e1-53bb-8760-2df7ec849ed5"
 LibPQ = "194296ae-ab2e-5f79-8cd4-7183a0a5a0d1"
 
 [compat]
 DocStringExtensions = "0.8"
 Glob = "1.3"
+Intervals = "1.5"
 LibPQ = "1.7"
 julia = "1.6"
 
