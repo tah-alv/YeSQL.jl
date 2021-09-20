@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Home · YeSQL.jl</title><script data-outdated-warner src="assets/warner.js"></script><link rel="canonical" href="https://tah-alv.github.io/YeSQL.jl/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href>YeSQL.jl</a></span></div><form class="docs-search" action="search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li class="is-active"><a class="tocitem" href>Home</a><ul class="internal"><li><a class="tocitem" href="#Limitations"><span>Limitations</span></a></li><li><a class="tocitem" href="#Installation"><span>Installation</span></a></li><li><a class="tocitem" href="#Example"><span>Example</span></a></li><li><a class="tocitem" href="#Loading-queries"><span>Loading queries</span></a></li><li><a class="tocitem" href="#Specifying-query-names-and-operation-types"><span>Specifying query names and operation types</span></a></li><li><a class="tocitem" href="#Running-tests"><span>Running tests</span></a></li></ul></li><li><a class="tocitem" href="pages/api/">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Home</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Home</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/tah-alv/YeSQL.jl/blob/master/docs/src/index.md#" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="YeSQL"><a class="docs-heading-anchor" href="#YeSQL">YeSQL</a><a id="YeSQL-1"></a><a class="docs-heading-anchor-permalink" href="#YeSQL" title="Permalink"></a></h1><p><a href="https://github.com/tah-alv/YeSQL.jl">YeSQL.jl</a> provides a way to load SQL queries and operations directly from <em>.sql</em> files and execute them from Julia. It was inspiried by similar packages for Python (<a href="https://github.com/honza/anosql">anosql</a>, <a href="https://github.com/nackjicholson/aiosql">aiosql</a>) and Clojure (<a href="https://github.com/krisajenkins/yesql">yesql</a>, <a href="https://github.com/layerware/hugsql">HugSQL</a>).</p><p>In contrast to writing queries as strings in code, or using an ORM, with this approach queries can be written, version controlled, formatted (<a href="https://github.com/darold/pgFormatter">pgFormatter</a>), run (<a href="https://www.postgresql.org/docs/current/app-psql.html">psql</a>), and debugged outside Julia using tools specifically designed for SQL.</p><h2 id="Limitations"><a class="docs-heading-anchor" href="#Limitations">Limitations</a><a id="Limitations-1"></a><a class="docs-heading-anchor-permalink" href="#Limitations" title="Permalink"></a></h2><p>Currently there is only an adapter defined for PostgreSQL via <a href="https://github.com/invenia/LibPQ.jl">LibPQ.jl</a> because that&#39;s all I use.  It should be possible to write adapters for other databases (e.g. SQLite).</p><h2 id="Installation"><a class="docs-heading-anchor" href="#Installation">Installation</a><a id="Installation-1"></a><a class="docs-heading-anchor-permalink" href="#Installation" title="Permalink"></a></h2><pre><code class="language-julia hljs">] add git@github.com:tah-alv/YeSQL.jl.git</code></pre><p>or </p><pre><code class="language-julia hljs">using Pkg
+Pkg.add(&quot;git@github.com:tah-alv/YeSQL.jl.git&quot;)</code></pre><h2 id="Example"><a class="docs-heading-anchor" href="#Example">Example</a><a id="Example-1"></a><a class="docs-heading-anchor-permalink" href="#Example" title="Permalink"></a></h2><p>Say we have the file <code>queries.sql</code> with the following queries</p><pre><code class="language-sql hljs">-- name: create_musicians#
+-- Create a table and index (Script operation)
+CREATE TABLE zappa_musicians (
+    musician_id serial PRIMARY KEY,
+    first_name text,
+    last_name text,
+    instrument text,
+    UNIQUE (first_name, last_name, instrument)
+);
+
+CREATE INDEX instrument_idx ON zappa_musicians (instrument);
+
+-- name: insert_musician&lt;!
+-- Insert a musician and return musician_id (InsertReturning operation)
+INSERT INTO zappa_musicians (
+    first_name,
+    last_name,
+    instrument)
+VALUES (
+    :first_name,
+    :last_name,
+    :instrument)
+RETURNING
+    musician_id;
+
+-- name: insert_musicians*!
+-- Insert several musicians (InsertUpdateDeleteMany operation)
+INSERT INTO zappa_musicians (
+    first_name,
+    last_name,
+    instrument)
+VALUES (
+    :first_name,
+    :last_name,
+    :instrument)
+RETURNING
+    musician_id;
+
+-- name: get_musicians
+-- Return musicians playing :instrument (Select operation)
+SELECT
+    first_name,
+    last_name
+FROM
+    zappa_musicians
+WHERE
+    instrument = :instrument;
+
+-- name: get_musician_id$
+-- Return the musician_id matching :first_name, :last_name and :instrument (SelectValue operation)
+SELECT
+    musician_id
+FROM
+    zappa_musicians
+WHERE
+    first_name = :first_name
+    AND last_name = :last_name
+    AND instrument = :instrument;</code></pre><p>We can interact with our database from Julia like this</p><pre><code class="language-julia hljs">using YeSQL
+using LibPQ
+
+conn = LibPQ.Connection(&quot;&lt;connection string&gt;&quot;)
+
+queries = YeSQL.load_path(&quot;./queries.sql&quot;)
+
+# Create the table:
+queries[:create_musicians](conn)
+
+# Insert some rows...
+# arguments can be passed as a Dict or NamedTuple
+musician = (first_name=&quot;Adrian&quot;, last_name=&quot;Belew&quot;, instrument=&quot;guitar&quot;)
+# Insert a row and get the returned fields as a NamedTuple
+(musician_id,) = queries[:insert_musician](conn, musician) # musician_id = 1
+
+# Insert multiple rows 
+musicians = (first_name=[&quot;Ruth&quot;, &quot;Mark&quot;], last_name=[&quot;Underwood&quot;, &quot;Volman&quot;],
+             instrument=[&quot;percussion&quot;, &quot;vocals&quot;])
+queries[:insert_musicians](conn, musicians)
+
+# Select and iterate over rows 
+for row in queries[:get_musicians](conn, Dict(:instrument =&gt; &quot;guitar&quot;))
+    println(&quot;$(row.first_name) $(row.last_name) played guitar&quot;) 
+end
+
+# Select a musician_id as an integer
+ruth_id = queries[:get_musician_id](
+    conn, (first_name=&quot;Ruth&quot;, last_name=&quot;Underwood&quot;, instrument=&quot;percussion&quot;))
+
+close(conn)</code></pre><h2 id="Loading-queries"><a class="docs-heading-anchor" href="#Loading-queries">Loading queries</a><a id="Loading-queries-1"></a><a class="docs-heading-anchor-permalink" href="#Loading-queries" title="Permalink"></a></h2><p>Queries can either be loaded from a <em>.sql</em> file or directory containing multiple files using <code>load_path(path)</code> or from a string using <code>load_string(query_string)</code>. These functions return a <code>Dict{Symbol, SQLQuery}</code> mapping query names to queries. Queries can be added to an existing dictionary using the mutating versions <code>load_path!(queries, path)</code> and <code>load_string!(queries, query_string)</code>.</p><p>An <code>SQLQuery</code> has the following structure:</p><pre><code class="language-julia hljs">struct SQLQuery{O&lt;:SQLOperation}
+    name::Symbol                # query name
+    query::String # query with comments removed and named arguments replaced with $1,$2 etc.
+    docstring::String           # query docstring
+    args::Vector{Symbol}        # named arguments
+    operation::O                # SQLOperation for execution dispatch
+end</code></pre><h2 id="Specifying-query-names-and-operation-types"><a class="docs-heading-anchor" href="#Specifying-query-names-and-operation-types">Specifying query names and operation types</a><a id="Specifying-query-names-and-operation-types-1"></a><a class="docs-heading-anchor-permalink" href="#Specifying-query-names-and-operation-types" title="Permalink"></a></h2><p>In a <em>.sql</em> file or string queries must be separated by comment lines which define the query names and operation types: <code>-- name: &lt;query name&gt;&lt;operation suffix&gt;</code>. Currently multi-line comments (<code>/* ... */</code> ) aren&#39;t recognized.</p><p>Query operations are indicated by an operation suffix which is mapped to a subtype of the abstract type <code>SQLOperation</code> and used for dispatch when executing the query.</p><table><tr><th style="text-align: right">Suffix</th><th style="text-align: right">Operation</th><th style="text-align: right">Description</th></tr><tr><td style="text-align: right">No suffix</td><td style="text-align: right"><code>Select</code></td><td style="text-align: right">Select query returning rows</td></tr><tr><td style="text-align: right"><code>^</code></td><td style="text-align: right"><code>SelectOne</code></td><td style="text-align: right">Return the first row from a query</td></tr><tr><td style="text-align: right"><code>$</code></td><td style="text-align: right"><code>SelectValue</code></td><td style="text-align: right">Return the first value from a query</td></tr><tr><td style="text-align: right"><code>!</code></td><td style="text-align: right"><code>InsertUpdateDelete</code></td><td style="text-align: right">Insert/Update/Delete a row</td></tr><tr><td style="text-align: right"><code>*!</code></td><td style="text-align: right"><code>InsertUpdateDeleteMany</code></td><td style="text-align: right">Insert/Update/Delete many rows</td></tr><tr><td style="text-align: right"><code>&lt;!</code></td><td style="text-align: right"><code>InsertReturning</code></td><td style="text-align: right">Insert a row and return values</td></tr><tr><td style="text-align: right"><code>#</code></td><td style="text-align: right"><code>Script</code></td><td style="text-align: right">A script with no arguments (e.g. DDL)</td></tr></table><h2 id="Running-tests"><a class="docs-heading-anchor" href="#Running-tests">Running tests</a><a id="Running-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Running-tests" title="Permalink"></a></h2><p>One of the testsets tests query execution. In order to run it a role with the name <code>$USER</code> must exist and have permission to create and drop PostgreSQL databases. If this role doesn&#39;t exist the testset will be skipped. </p><p>To create this role you can run</p><pre><code class="language-sh hljs">sudo -u postgres createuser -d $USER</code></pre><p>The testset will create a database called <code>test-yesql</code> which will be dropped after the tests run, but if there is an error during the tests the database might not be dropped. In this case just run <code>dropdb test-yesql</code>.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="pages/api/">API »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.5 on <span class="colophon-date" title="Monday 20 September 2021 20:17">Monday 20 September 2021</span>. Using Julia version 1.6.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
