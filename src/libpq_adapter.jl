@@ -59,7 +59,9 @@ end
 
 function (q::SQLQuery{<:InsertUpdateDeleteMany})(conn::LibPQ.Connection, params=NamedTuple())
     execute(conn, "BEGIN;")
-    LibPQ.load!(_build_params(q, params), conn, q.query)
+    LibPQ.load!(NamedTuple(k => _libpq_literal(v) for (k,v) in pairs(params) if k in q.args),
+                conn,
+                q.query)
     execute(conn, "COMMIT;")
     return nothing
 end
