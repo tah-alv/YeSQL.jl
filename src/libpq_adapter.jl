@@ -44,7 +44,10 @@ end
 
 function (q::SQLQuery{<:Union{InsertReturning,SelectOne}})(conn::LibPQ.Connection, params=NamedTuple())
     result = execute(conn, q.query, _build_params(q, params))
-    if num_rows(result) > 1
+    if num_rows(result) == 0
+        close(result)
+        return nothing
+    elseif num_rows(result) > 1
         @warn "$(q.name) returned more than one row"
     end
     nt = NamedTuple{tuple(Symbol.(result.column_names)...)}([v for v in first(result)])
@@ -61,7 +64,10 @@ end
 
 function (q::SQLQuery{<:SelectValue})(conn::LibPQ.Connection, params=NamedTuple())
     result = execute(conn, q.query, _build_params(q, params))
-    if num_rows(result) > 1
+    if num_rows(result) == 0
+        close(result)
+        return nothing
+    elseif num_rows(result) > 1
         @warn "$(q.name) returned more than one row"
     end
     row = first(result)

@@ -47,8 +47,13 @@ if postgres_installed
         queries[:delete_musician](conn, adrian)
         @test queries[:count_musicians](conn) == 2
 
+        # test that adrian is deleted and nothing is returned
+        id = queries[:get_musician_id](conn, adrian)
+        @test id === nothing
+        row = queries[:get_musician_name](conn, (musician_id=1,))
+        @test row === nothing
+
         # test arrays of ranges
-        # queries = load_path(joinpath(@__DIR__, "sql", "more-queries.sql"))
         queries[:create_test_types](conn)
 
         d1 = Date(2001,1,1)
