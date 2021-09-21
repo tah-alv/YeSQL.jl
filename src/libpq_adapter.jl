@@ -9,8 +9,10 @@ _right_bound(::Type{Closed}) = ']'
 
 # Define string literals for intervals and vectors of intervals
 _libpq_literal(x) = x    # default: identity
+
+_libpq_literal(r::AbstractRange) = string('[', r.start, ',', r.stop, ']')
 function _libpq_literal(i::AbstractInterval{T,L,R}) where {T,L<:Bounded,R<:Bounded}
-    return string(_left_bound(L), first(i), ",", last(i), _right_bound(R))
+    return string(_left_bound(L), first(i), ',', last(i), _right_bound(R))
 end
 function _libpq_literal(i::AbstractInterval{T,L,R}) where {T,L<:Bounded,R<:Unbounded}
     return string(_left_bound(L), first(i), ",)")
