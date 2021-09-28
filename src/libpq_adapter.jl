@@ -33,7 +33,7 @@ _build_params(q::SQLQuery, params) = Tuple(_libpq_literal(params[a]) for a in q.
 Execute query `q` with `params` using connection `conn`
 
 """
-function (q::SQLQuery{<:Select})(conn::LibPQ.Connection, params=NamedTuple()) 
+function (q::SQLQuery{<:Union{Select,InsertUpdateDelete}})(conn::LibPQ.Connection, params=NamedTuple()) 
     return execute(conn, q.query, _build_params(q, params))
 end
 

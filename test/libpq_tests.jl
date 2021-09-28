@@ -42,10 +42,13 @@ if postgres_installed
                       active=[Date(1981, 1, 1)..Date(1987,12,31), Date(1988, 1, 1)..Date(1992,12,31)])
         queries[:insert_musicians](conn, guitarists)
 
+        queries[:insert_musician](conn, (first_name="Pierre", last_name="Boulez", instrument="Conductor",
+                                         active=Date(1984,1,1)..Date(1985,1,1)))
+
         # count, delete and count again
-        @test queries[:count_musicians](conn) == 3
+        @test queries[:count_musicians](conn) == 4
         queries[:delete_musician](conn, adrian)
-        @test queries[:count_musicians](conn) == 2
+        @test queries[:count_musicians](conn) == 3
 
         # test that adrian is deleted and nothing is returned
         id = queries[:get_musician_id](conn, adrian)
