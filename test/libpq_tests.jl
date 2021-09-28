@@ -49,9 +49,9 @@ if postgres_installed
 
         # test that adrian is deleted and nothing is returned
         id = queries[:get_musician_id](conn, adrian)
-        @test id === nothing
+        @test id === missing
         row = queries[:get_musician_name](conn, (musician_id=1,))
-        @test row === nothing
+        @test row === missing
 
         # test arrays of ranges
         queries[:create_test_types](conn)

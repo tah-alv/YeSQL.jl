@@ -48,7 +48,7 @@ function (q::SQLQuery{<:Union{InsertReturning,SelectOne}})(conn::LibPQ.Connectio
     result = execute(conn, q.query, _build_params(q, params))
     if num_rows(result) == 0
         close(result)
-        return nothing
+        return missing
     elseif num_rows(result) > 1
         @warn "$(q.name) returned more than one row"
     end
@@ -70,7 +70,7 @@ function (q::SQLQuery{<:SelectValue})(conn::LibPQ.Connection, params=NamedTuple(
     result = execute(conn, q.query, _build_params(q, params))
     if num_rows(result) == 0
         close(result)
-        return nothing
+        return missing
     elseif num_rows(result) > 1
         @warn "$(q.name) returned more than one row"
     end
