@@ -32,7 +32,8 @@ end
         "-- name: script#" => (YeSQL.Script(), :script),
         "-- name: insert!" => (YeSQL.InsertUpdateDelete(), :insert),
         "-- name: insert_many*!" => (YeSQL.InsertUpdateDeleteMany(), :insert_many),
-        "-- name: insert_returning<!" => (YeSQL.InsertReturning(), :insert_returning),
+        "-- name: insert_returning^!" => (YeSQL.InsertReturning(), :insert_returning),
+        "-- name: insert_returning_value\$!" => (YeSQL.InsertReturningValue(), :insert_returning_value),
     )
 
     for (name_str, (target_op, target_name)) in names

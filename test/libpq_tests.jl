@@ -31,6 +31,11 @@ if postgres_installed
         id = queries[:get_musician_id](conn, adrian)
         @test id == 1
 
+        # test returning value
+        queries[:delete_musician](conn, adrian)
+        id = queries[:insert_musician_id_value](conn, adrian)
+        @test id == 2
+
         # select data about a musician
         (first_name, last_name) = queries[:get_musician_name](conn, (musician_id=id,))
         @test first_name == adrian[:first_name]

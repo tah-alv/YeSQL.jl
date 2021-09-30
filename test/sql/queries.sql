@@ -53,7 +53,22 @@ FROM
 DELETE FROM zappa
 WHERE first_name = :first_name;
 
--- name: insert_musician_id<!
+-- name: insert_musician_id^!
+-- Insert a musician and return their id
+INSERT INTO zappa (
+    first_name,
+    last_name,
+    instrument,
+    active)
+VALUES (
+    :first_name,
+    :last_name,
+    :instrument,
+    :active)
+RETURNING
+    musician_id;
+
+-- name: insert_musician_id_value$!
 -- Insert a musician and return their id
 INSERT INTO zappa (
     first_name,

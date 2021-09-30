@@ -66,7 +66,7 @@ function (q::SQLQuery{<:InsertUpdateDeleteMany})(conn::LibPQ.Connection, params=
     return nothing
 end
 
-function (q::SQLQuery{<:SelectValue})(conn::LibPQ.Connection, params=NamedTuple())
+function (q::SQLQuery{<:Union{SelectValue,InsertReturningValue}})(conn::LibPQ.Connection, params=NamedTuple())
     result = execute(conn, q.query, _build_params(q, params))
     if num_rows(result) == 0
         close(result)

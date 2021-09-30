@@ -51,7 +51,7 @@ CREATE TABLE zappa_musicians (
 
 CREATE INDEX instrument_idx ON zappa_musicians (instrument);
 
--- name: insert_musician<!
+-- name: insert_musician^!
 -- Insert a musician and return musician_id (InsertReturning operation)
 INSERT INTO zappa_musicians (
     first_name,
@@ -167,12 +167,13 @@ when executing the query.
 
 | Suffix    | Operation                | Description                           |
 |-----------|--------------------------|---------------------------------------|
-| No suffix | `Select`              | Select query returning rows           |
+| No suffix | `Select`                 | Select query returning rows           |
 | `^`       | `SelectOne`              | Return the first row from a query     |
 | `$`       | `SelectValue`            | Return the first value from a query   |
 | `!`       | `InsertUpdateDelete`     | Insert/Update/Delete a row            |
 | `*!`      | `InsertUpdateDeleteMany` | Insert/Update/Delete many rows        |
-| `<!`      | `InsertReturning`        | Insert a row and return values        |
+| `^!`      | `InsertReturning`        | Insert a row and return values        |
+| `$!`      | `InsertReturningValue`   | Insert a row and a value              |
 | `#`       | `Script`                 | A script with no arguments (e.g. DDL) |
 
 ## Running tests

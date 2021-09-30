@@ -7,8 +7,10 @@ export load_path, load_path!, load_string, load_string!
 # SQLOperation types for dispatch
 """Abstract parent type"""
 abstract type SQLOperation end
-"""An operation which inserts a row returns a row of values. Name suffix: `<!`"""
+"""An operation which inserts a row returns a row of values. Name suffix: `^!`"""
 struct InsertReturning <: SQLOperation end
+"""An operation which inserts a row returns a value. Name suffix: `\$!`"""
+struct InsertReturningValue <: SQLOperation end
 """An operation which inserts/updates/deletes many rows. Name suffix: `*!`"""
 struct InsertUpdateDeleteMany <: SQLOperation end
 """An operation which inserts/updates/deletes a row. Name suffix: `!`"""
@@ -73,8 +75,10 @@ YeSQL._interpret("my_script_query#")
 ```
 """
 function _interpret(query_name::AbstractString)::Tuple{<:SQLOperation, Symbol}
-    (operation, name) = if endswith(query_name, "<!")
+    (operation, name) = if endswith(query_name, "^!")
         (InsertReturning(), query_name[begin:end-2])
+    elseif endswith(query_name, "\$!")
+        (InsertReturningValue(), query_name[begin:end-2])
     elseif endswith(query_name, "*!")
         (InsertUpdateDeleteMany(), query_name[begin:end-2])
     elseif endswith(query_name, "!")
