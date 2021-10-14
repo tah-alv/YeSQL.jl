@@ -12,6 +12,14 @@ them from Julia.
 Currently query execution is only supported for PostgreSQL via
 [LibPQ.jl](https://github.com/invenia/LibPQ.jl).
 
+When developing queries as part of a package changes made in the
+*.sql* files will not be reflected when the package is reloaded. A
+workaround is to manually remove the cached package:
+```julia
+id = Base.identify_package("<package name>")
+map(rm, Base.find_all_in_cache_path(id))
+```
+
 ## Installation
 
 ```julia
