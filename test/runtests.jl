@@ -72,7 +72,7 @@ end
     )
 
     docstrings = Dict(
-        :get_musicians => "Return musicians active on :employed_date",
+        :get_musicians => "Return musicians active on :employed_date. A superfluous line to test multi-line docstrings.",
         :get_musician_id => "Return musician id",
     )
 

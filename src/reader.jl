@@ -26,36 +26,41 @@ function _extract!(queries::AbstractDict, queries_text::AbstractString)
         # Find start/end indices of query and extract
         istart = nm.offset + length(nm.match)
         iend = i < length(name_matches) ? name_matches[i+1].offset - 1 : length(queries_text)
-        raw_query = queries_text[istart:iend]
+        query = queries_text[istart:iend]
 
         # Extract the docstring if present
-        doc_match = match(DOCSTRING_REGEX, raw_query)
-        docstring = doc_match === nothing ? "" : string(strip(doc_match[:docstring]))
+        docstring = ""
+        doc_match = match(DOCSTRING_REGEX, query)
+        while doc_match !== nothing
+            docstring *= " $(string(strip(doc_match[:docstring])))"
+            # docstring = doc_match === nothing ? "" : string(strip(doc_match[:docstring]))
 
-        # Strip out the docstring and any comments in the query
-        transformed_query = replace(strip(raw_query), DOCSTRING_REGEX => "")
-        transformed_query = replace(transformed_query, COMMENT_REGEX => " ")
+            query = replace(strip(query), DOCSTRING_REGEX => "")
+            doc_match = match(DOCSTRING_REGEX, query)
+        end
+        docstring = string(lstrip(docstring))
+
+        # Strip out any comments 
+        query = replace(query, COMMENT_REGEX => " ")
 
         # Find any named arguments in the query and replace them with $1, $2 etc
         args = Symbol[]
         num_args = 0
-        for m in eachmatch(ARG_REGEX, transformed_query)
+        for m in eachmatch(ARG_REGEX, query)
             arg = Symbol(m[:symbol_name])
-            if arg in args      # argument already captured
-                continue
-            else                # replace the named argument with numerical placeholder
+            occursin(":$(arg)", query) || continue
+            if !(arg in args)      # argument already captured
                 num_args += 1
                 push!(args, arg)
-                transformed_query = replace(transformed_query,
-                                            m.match => "$(m[:leading_char])\$$(num_args)")
             end
+            query = replace(query, m.match => "$(m[:leading_char])\$$(num_args)")
         end
 
         # Replace newlines and extra spaces with a single space
-        transformed_query = replace(transformed_query, r"\s+" => " ")
+        query = replace(query, r"\s+" => " ")
 
         # Insert the SQLQuery into the Dict
-        queries[query_name] = SQLQuery(query_name, transformed_query, docstring, args, operation)
+        queries[query_name] = SQLQuery(query_name, query, docstring, args, operation)
     end
     return nothing
 end

@@ -12,7 +12,8 @@ CREATE TABLE zappa (
 CREATE INDEX first_name_id ON zappa (first_name);
 
 -- name: get_musicians
--- Return musicians active on :employed_date
+-- Return musicians active on :employed_date.
+-- A superfluous line to test multi-line docstrings. 
 SELECT
     first_name,
     last_name,
